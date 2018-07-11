@@ -1,0 +1,135 @@
+---
+swagger: "2.0"
+info:
+  description: "This API let you open, close and keepalive video streams"
+  version: "1.0"
+  title: "DAZN Test"
+  termsOfService: "http://swagger.io/terms/"
+  contact:
+    email: "work@andrea.lorenzani.name"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "localhost:9000"
+basePath: "/"
+tags:
+- name: "stream"
+  description: "Handle streams (open, close, keepalive)"
+schemes:
+- "https"
+- "http"
+paths:
+  /stream/{userId}:
+    post:
+      tags:
+      - "stream"
+      summary: "Open a new stream for the user"
+      description: "Open a new stream"
+      operationId: "openStream"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "The userId of the user that is opening the stream"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/StreamDetail"
+        400:
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        500:
+          description: "Internal error"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+      x-swagger-router-controller: "Stream"
+  /stream/{userId}/{streamId}:
+    put:
+      tags:
+      - "stream"
+      summary: "Keepalive a stream"
+      description: "Set the active stream as alive"
+      operationId: "keepaliveStream"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "The userId of the user that has opened the stream"
+        required: true
+        type: "string"
+      - name: "streamId"
+        in: "path"
+        description: "The id of the stream that is alive"
+        required: true
+        type: "string"
+      responses:
+        204:
+          description: "successful operation"
+        400:
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        500:
+          description: "Internal error"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+      x-swagger-router-controller: "Stream"
+    delete:
+      tags:
+      - "stream"
+      summary: "Close one of the streams of the user"
+      description: "The stream for the user is explicitely close"
+      operationId: "delStream"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "The userId of the user that is closing the stream"
+        required: true
+        type: "string"
+      - name: "streamId"
+        in: "path"
+        description: "The id of the stream that we want to close"
+        required: true
+        type: "string"
+      responses:
+        204:
+          description: "successful operation"
+        400:
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        500:
+          description: "Internal error"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+      x-swagger-router-controller: "Stream"
+definitions:
+  ErrorMessage:
+    properties:
+      code:
+        type: "string"
+        example: "01"
+        description: "A code for the error"
+      message:
+        type: "string"
+        example: "Something went wrng"
+        description: "The description of the error"
+  StreamDetail:
+    properties:
+      id:
+        type: "string"
+        example: "oenvpenivopwenvpwvprpntewp"
+        description: "The id of the new stream"
+    example:
+      id: "oenvpenivopwenvpwvprpntewp"
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"

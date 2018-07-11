@@ -1,0 +1,25 @@
+{
+  "name": "dazn-test",
+  "version": "1.0.0",
+  "description": "This API let you open, close and keepalive video streams",
+  "main": "index.js",
+  "scripts": {
+	"prestart": "npm install",
+	"start": "node index.js",
+  "test": "tap test/*.js"
+  },
+  "keywords": [
+    "swagger"
+  ],
+  "license": "Unlicense",
+  "private": true,
+  "devdependencies": {
+    "tap": "^12.0.1",
+    "request": "^2.87.0"
+  },
+  "dependencies": {
+    "connect": "^3.2.0",
+    "js-yaml": "^3.3.0",
+    "swagger-tools": "0.10.1"
+  }
+}
