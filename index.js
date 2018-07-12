@@ -1,6 +1,6 @@
 'use strict';
 
-var keepAliveTimeout = 5000;
+var keepAliveTimeout = 30000; // 30 seconds
 
 exports.setKeepAliveTimeout = function(newTimeout) {
   keepAliveTimeout = newTimeout;
