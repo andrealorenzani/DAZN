@@ -23,7 +23,14 @@ var createStreamDetail = function(id){
  **/
 exports.delStream = function(userId,streamId) {
   return new Promise(function(resolve, reject) {
-    resolve();
+    try{
+      dao.remove(userId, streamId);
+      resolve(createResp(200, null));
+    }
+    catch(ex){
+      console.log("error deleting stream: "+ex);
+      resolve(createErrorMsg("03", ex));
+    }
   });
 }
 
@@ -43,6 +50,7 @@ exports.keepaliveStream = function(userId,streamId) {
       resolve(createResp(200, null));
     }
     catch(ex){
+      console.log("error keeping alive stream: "+ex);
       resolve(createErrorMsg("02", ex));
     }
   });

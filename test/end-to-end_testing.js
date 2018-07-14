@@ -86,10 +86,12 @@ tap.test('Swagger end-to-end testing', function (t1) {
 		testStreamApi('second create', t2, createStreamParams("fakeuser"));
 		testStreamApi('third create', t2, createStreamParams("fakeuser"));
 		t2.test('Fail if more than 3 streams', function(t3){
-			console.log("Sending a POST request");
 			// An object of options to indicate where to post to
 	  		request(createStreamParams("fakeuser"), function(err, res, body){
-	  			if(err) console.log(err);
+	  			if(err) {
+	  				console.log(err);
+	  				t3.fail(err);
+	  			}
 	  			t3.equal(res.statusCode, 400, "StatusCode is not 400");
 	  			t3.pass("success");
 	  			t3.end();
@@ -115,7 +117,6 @@ tap.test('Swagger end-to-end testing', function (t1) {
   			}
   			var id = JSON.parse(body).id;
   			t2.equal(res.statusCode, 200, "StatusCode is not 200");
-  			console.log("Body: "+id);
   			// The keepalive of a created stream should work
   			testStreamApi("firstKeepAlive", t2, keepaliveStreamParams("fakekauser", id));
   			// The keepalive should work if before the timeout
@@ -148,7 +149,7 @@ tap.test('Swagger end-to-end testing', function (t1) {
   			t2.equal(res.statusCode, 200, "StatusCode is not 200");
   			var id = JSON.parse(body).id;
   			// The delete of a created stream should work
-  			testStreamApi("delsuccess", t2, keepaliveStreamParams("fakedeluser", id));
+  			testStreamApi("delsuccess", t2, deleteStreamParams("fakedeluser", id));
   			// The delete should not work after being already deleted
 			request(deleteStreamParams("fakedeluser", id), function(err2, res2, body){
 	  			if(err2) console.log(err2);

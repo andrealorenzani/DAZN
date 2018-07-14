@@ -16,7 +16,6 @@ tags:
 - name: "stream"
   description: "Handle streams (open, close, keepalive)"
 schemes:
-- "https"
 - "http"
 paths:
   /stream/{userId}:
