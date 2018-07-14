@@ -4,12 +4,16 @@ var loki = require('lokijs');
 const uuidv1 = require('uuid/v1');
 var db = new loki('streams.json');
 var streamColl = db.addCollection('streams');
-var server = require('../Server.js').getKeepAliveTimeout;
+var keepAlive = require('../Server.js').getKeepAliveTimeout;
+
+var filterNotOld = function(obj){
+	return (Date.now() - obj.lastAlive.getTime()) <= keepAlive();
+}
 
 exports.createStream = function(user){
 	var openStreams = streamColl.chain()
 								.find({ name : user })
-								.where(function(obj) { return obj.lastAlive - new Date() <= server() })
+								.where(filterNotOld)
 								.data()
 								.length;
 	if(openStreams < 3) {
@@ -23,13 +27,18 @@ exports.createStream = function(user){
 }
 
 exports.updateLastAlive = function(user, streamId) {
-	streamColl.findAndUpdate({ 'name': "$user", 'streamId': "$streamId"}, function(obj){
-		obj.lastAlive = new Date();
+	streamColl.findAndUpdate({ name: user, streamId: streamId}, function(obj){
+		if(filterNotOld(obj)){
+			obj.lastAlive = new Date();
+		}
+		else {
+			throw("Stream has already expired: "+streamId);
+		}
 	});
 }
 
-exports.updateLastAlive = function(user, streamId) {
-	streamColl.findAndRemove({ 'name': "$user", 'streamId': "$streamId"});
+exports.remove = function(user, streamId) {
+	streamColl.findAndRemove({ name: user, streamId: streamId});
 }
 
 exports.getCollection = function(){ return streamColl; }
