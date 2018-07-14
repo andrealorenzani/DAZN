@@ -47,17 +47,52 @@ tap.test('Database (loki) testing', function (t1) {
 			t2.fail("Error in updating the keepalive: "+ex);
 		}
 		db.updateLastAlive("user", id);
-		var tst = Date.now();
 		setTimeout(function(){
 			try{
 				db.updateLastAlive("user", id);
-				console.log("Timeout: "+(Date.now()-tst));
 				t2.fail("Updated the keepalive working after timeout"); 
 			}
 			catch(ex) {
 				t2.equal(ex, "Stream has already expired: "+id, "The update of KeepAlive has thrown a different exception: "+ex);
 				t2.pass("The stream has expired");
+				db.createStream("user");
+				db.createStream("user");
+				db.createStream("user");
+				t2.pass("After expires I can recreate 3 streams");
 			}
+			t2.end();
+		}, 200);
+	});
+
+	t1.test('Delete', function (t2) {
+		var id = db.createStream("user");
+		db.remove("user", id);
+		t2.pass("Can delete");
+		try{
+			db.updateLastAlive("user", id); 
+			t2.fail("Should not update");
+		}
+		catch(ex) {
+			t2.pass("The stream has been removed");
+		}
+		try{
+			db.remove("user", id); 
+			t2.fail("Should not remove");
+		}
+		catch(ex) {
+			t2.pass("The stream has been removed");
+		}
+		id = db.createStream("user");
+		db.createStream("user");
+		db.createStream("user");
+		t2.pass("Can create 3 stream after a delete");
+		setTimeout(function(){
+			db.remove("user", id);
+			t2.pass("Can delete after keepalive expires");
+			db.createStream("user");
+			db.createStream("user");
+			db.createStream("user");
+			t2.pass("After expires it can recreate 3 streams");
 			t2.end();
 		}, 200);
 	});
