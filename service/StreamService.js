@@ -1,5 +1,17 @@
 'use strict';
 
+var dao = require("../dao/dao-loki.js")
+
+var createResp = function(status, payload){
+  return { code: status, body: payload };
+}
+var createErrorMsg = function(errCode, msg, status=400){
+  return createResp(status, { code: errCode, message: msg });
+}
+var createStreamDetail = function(id){
+  return createResp(200, { id: id });
+}
+
 
 /**
  * Close one of the streams of the user
@@ -40,14 +52,13 @@ exports.keepaliveStream = function(userId,streamId) {
  **/
 exports.openStream = function(userId) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = {
-  "id" : "oenvpenivopwenvpwvprpntewp"
-};
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
+    try{
+      var id = dao.createStream(userId);
+      resolve(createStreamDetail(id));
+    }
+    catch(ex){
+      console.log("error opening stream: "+ex);
+      resolve(createErrorMsg("01", ex));
     }
   });
 }
