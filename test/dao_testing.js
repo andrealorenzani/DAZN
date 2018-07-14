@@ -2,10 +2,10 @@
 
 // https://medium.com/@tech_fort/an-introduction-to-lokijs-the-idiomatic-way-d24a4c546f7
 
-var server = require("../index.js");
 var tap = require('tap');
 var db = require('../dao/dao-loki.js');
 var assert = require('assert');
+var server = require("../index.js");
 
 /*tap.beforeEach(function (done) {
 	console.log("Clearing the database");
@@ -14,6 +14,7 @@ var assert = require('assert');
 });*/
 
 tap.test('Database (loki) testing', function (t1) {
+	db.getCollection().clear();
 	t1.test('Insertion', function (t2) {
 		db.createStream("user");
 		db.createStream("user");

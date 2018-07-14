@@ -9,15 +9,6 @@ var runningSrv = {};
 
 // Using https://www.node-tap.org/api/
 
-tap.beforeEach(function (done) {
-	console.log("Waiting for the server to come up");
-	server.startServer.then(function(srv){
-		console.log("Server up and running");
-		runningSrv = srv;
-		done();
-	});
-});
-
 var createStreamParams = function(user) {
 	return { method: 'POST', 
 			uri: 'http://localhost:9000/stream/' + user,
@@ -78,6 +69,15 @@ var testStreamApi = function(id, test, payload) {
 
 
 tap.test('Swagger end-to-end testing', function (t1) {
+	t1.beforeEach(function (done) {
+		console.log("Waiting for the server to come up");
+		server.startServer.then(function(srv){
+			console.log("Server up and running");
+			runningSrv = srv;
+			done();
+		});
+	});
+
 	t1.test('Create a Stream', function(t2){
 		testStreamApi('first create', t2, createStreamParams("fakeuser"));
 		testStreamApi('second create', t2, createStreamParams("fakeuser"));
@@ -149,6 +149,4 @@ tap.test('Swagger end-to-end testing', function (t1) {
 	t1.pass("great test");
 	t1.end();
 	tap.end();
-}).then(function(){
-	runningSrv.close();
 });

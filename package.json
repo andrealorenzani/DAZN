@@ -4,9 +4,9 @@
   "description": "This API let you open, close and keepalive video streams",
   "main": "index.js",
   "scripts": {
-	"prestart": "npm install",
-	"start": "node index.js",
-  "test": "tap test/*.js"
+    "prestart": "npm install",
+    "start": "node index.js",
+    "test": "tap test/*.js"
   },
   "keywords": [
     "swagger"
@@ -22,6 +22,9 @@
     "js-yaml": "^3.3.0",
     "swagger-tools": "^0.10.1",
     "lokijs": "^1.5.5",
-    "uuid": "^3.3.2" 
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "tap": "^12.0.1"
   }
 }

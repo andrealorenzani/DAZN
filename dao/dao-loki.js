@@ -8,13 +8,13 @@ var server = require('../index.js').getKeepAliveTimeout;
 
 exports.createStream = function(user){
 	var openStreams = streamColl.chain()
-								.find({ 'name' : "$user" })
-								.where(function(obj) { return obj.lastAlive - new Date() <= server.getKeepAliveTimeout() })
+								.find({ name : user })
+								.where(function(obj) { return obj.lastAlive - new Date() <= server() })
 								.data()
-								.count();
+								.length;
 	if(openStreams < 3) {
 		var streamId = uuidv1();
-		streamColl.insert({ 'name': "$user", 'streamId': "$streamId", 'lastAlive': new Date() }); 
+		streamColl.insert({ name: user, streamId: streamId, lastAlive: new Date() }); 
 		return streamId;
 	}
 	else {
