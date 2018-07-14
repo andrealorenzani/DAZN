@@ -20,7 +20,6 @@ var fakeFun = function(){
 
 tap.test('StreamService testing', function (t1) {
 	t1.test('openStream', function(t2){
-		//sinon.replace(require("../dao/dao-loki.js"), 'createStream', sinon.fake.returns("mywonderfulid"));
 		sinon.stub(require("../dao/dao-loki.js"), 'createStream').callsFake(fakeFun);
 		var service = require('../service/StreamService.js');
 		service.openStream('user').then(function(res) {
