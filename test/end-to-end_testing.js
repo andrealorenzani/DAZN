@@ -109,15 +109,20 @@ tap.test('Swagger end-to-end testing', function (t1) {
 		console.log("Sending a PUT request");
 		// An object of options to indicate where to post to
   		request(createStreamParams("fakekauser"), function(err, res, body){
-  			if(err) console.log(err);
+  			if(err) {
+  				console.log(err);
+  				t2.fail(err);
+  			}
+  			var id = JSON.parse(body).id;
   			t2.equal(res.statusCode, 200, "StatusCode is not 200");
+  			console.log("Body: "+id);
   			// The keepalive of a created stream should work
-  			testStreamApi("firstKeepAlive", t2, keepaliveStreamParams("fakekauser", body.id));
+  			testStreamApi("firstKeepAlive", t2, keepaliveStreamParams("fakekauser", id));
   			// The keepalive should work if before the timeout
-  			testStreamApi("secondKeepAlive", t2, keepaliveStreamParams("fakekauser", body.id));
+  			testStreamApi("secondKeepAlive", t2, keepaliveStreamParams("fakekauser", id));
   			// The keepalive should not work after the timeout
   			setTimeout(function(){
-  				request(keepaliveStreamParams("fakekauser", body.id), function(err2, res2, body){
+  				request(keepaliveStreamParams("fakekauser", id), function(err2, res2, body){
 		  			if(err2) console.log(err2);
 		  			t2.equal(res2.statusCode, 400, "StatusCode is not 400");
 		  			t2.pass("success");
@@ -136,12 +141,16 @@ tap.test('Swagger end-to-end testing', function (t1) {
 		});	
 		// An object of options to indicate where to post to
   		request(createStreamParams("fakedeluser"), function(err, res, body){
-  			if(err) console.log(err);
+  			if(err) {
+  				console.log(err);
+  				t2.fail(err);
+  			}
   			t2.equal(res.statusCode, 200, "StatusCode is not 200");
+  			var id = JSON.parse(body).id;
   			// The delete of a created stream should work
-  			testStreamApi("delsuccess", t2, keepaliveStreamParams("fakedeluser", body.id));
+  			testStreamApi("delsuccess", t2, keepaliveStreamParams("fakedeluser", id));
   			// The delete should not work after being already deleted
-			request(deleteStreamParams("fakedeluser", body.id), function(err2, res2, body){
+			request(deleteStreamParams("fakedeluser", id), function(err2, res2, body){
 	  			if(err2) console.log(err2);
 	  			t2.equal(res2.statusCode, 400, "StatusCode is not 400");
 	  			t2.pass("success");

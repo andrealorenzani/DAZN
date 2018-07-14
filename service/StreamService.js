@@ -38,7 +38,13 @@ exports.delStream = function(userId,streamId) {
  **/
 exports.keepaliveStream = function(userId,streamId) {
   return new Promise(function(resolve, reject) {
-    resolve();
+    try{
+      dao.updateLastAlive(userId, streamId);
+      resolve(createResp(200, null));
+    }
+    catch(ex){
+      resolve(createErrorMsg("02", ex));
+    }
   });
 }
 

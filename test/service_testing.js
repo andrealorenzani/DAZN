@@ -7,21 +7,32 @@ var sinon = require('sinon');
 
 var expResOpenStream = { id : "mywonderfulid" };
 var expRes4Streams = { code: "01", message: "exception" };
+var expResKeepAlive = { code: "02", message: "exception" };
 var toString = function(payload){
 	return JSON.stringify(payload);
 }
 
 var isFailure = false;
 
-var fakeFun = function(){
+var fakeFunReturn = function(){
 	if(isFailure) throw("exception");
 	else return "mywonderfulid";
 }
 
+var fakeFun = function(){
+	if(isFailure) throw("exception");
+}
+
+var dao = require("../dao/dao-loki.js");
+sinon.stub(dao, 'updateLastAlive').callsFake(fakeFun);
+sinon.stub(dao, 'remove').callsFake(fakeFun);
+sinon.stub(dao, 'createStream').callsFake(fakeFunReturn);
+var service = require('../service/StreamService.js');
+
+
 tap.test('StreamService testing', function (t1) {
 	t1.test('openStream', function(t2){
-		sinon.stub(require("../dao/dao-loki.js"), 'createStream').callsFake(fakeFun);
-		var service = require('../service/StreamService.js');
+		isFailure=false;
 		service.openStream('user').then(function(res) {
 			if(toString(res.body) === toString(expResOpenStream)){
 				t2.pass("Added value passed");
@@ -34,10 +45,33 @@ tap.test('StreamService testing', function (t1) {
 	});
 	t1.test('openStream with 3 streams', function(t2){
 		isFailure=true;
-		var service = require('../service/StreamService.js');
 		service.openStream('user').then(function(res) {
-			console.log("Result: "+toString(res));
 			if(toString(res.body) === toString(expRes4Streams) &&
+				res.code === 400){
+				t2.pass("Added value passed");
+			}
+			else{
+				t2.fail("Error in adding streams");
+			}
+			t2.end();
+		})
+	});
+	t1.test('keepalive', function(t2){
+		isFailure=false;
+		service.keepaliveStream('user', 'id').then(function(res) {
+			if(res.body == null){
+				t2.pass("Added value passed");
+			}
+			else{
+				t2.fail("Error in adding streams");
+			}
+			t2.end();
+		})
+	});
+	t1.test('keepalive in error', function(t2){
+		isFailure=true;
+		service.keepaliveStream('user', 'id').then(function(res) {
+			if(toString(res.body) === toString(expResKeepAlive) &&
 				res.code === 400){
 				t2.pass("Added value passed");
 			}
