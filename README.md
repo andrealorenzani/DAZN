@@ -17,3 +17,41 @@ open http://localhost:9000/docs
 ```
 
 This project leverages the mega-awesome [swagger-tools](https://github.com/apigee-127/swagger-tools) middleware which does most all the work.
+
+# Docker
+### How to build
+
+In the main directory, use this command:
+
+```
+sudo docker build -t <user>/dazn .
+```
+
+### How to push
+
+Login with docker command line
+```
+sudo docker login --username=<user> --email=<email>
+```
+
+Tag your image (you can see tag and name with `docker images`)
+```
+sudo docker tag <image-id> <user>/dazn:latest
+```
+
+Push the image
+```
+sudo docker push <user>/dazn:latest
+```
+
+### How to run
+
+Be sure you have the docker image
+```
+docker pull alorenzani/dazn
+```
+
+Run it
+```
+docker run -p 9000:9000 alorenzani/dazn
+```
