@@ -1,11 +1,11 @@
 'use strict';
 
-var server = require("../index.js");
 var tap = require('tap');
 var request = require('request')
 var assert = require('assert');
+var server = require("../Server.js");
 
-var runningSrv = {};
+var runningSrv = null;
 
 // Using https://www.node-tap.org/api/
 
@@ -68,15 +68,18 @@ var testStreamApi = function(id, test, payload) {
 }
 
 
-tap.test('Swagger end-to-end testing', function (t1) {
-	t1.beforeEach(function (done) {
-		console.log("Waiting for the server to come up");
-		server.startServer.then(function(srv){
-			console.log("Server up and running");
-			runningSrv = srv;
-			done();
-		});
+tap.test('Starting server', function (t1) {
+	console.log("Waiting for the server to come up");
+	server.startServer().then(function(srv){
+		console.log("Server up and running");
+		runningSrv = srv;
+		t1.pass("server can start");
+		t1.end();
 	});
+	tap.pass();
+});
+
+tap.test('Swagger end-to-end testing', function (t1) {
 
 	t1.test('Create a Stream', function(t2){
 		testStreamApi('first create', t2, createStreamParams("fakeuser"));
@@ -148,5 +151,16 @@ tap.test('Swagger end-to-end testing', function (t1) {
 	});
 	t1.pass("great test");
 	t1.end();
+});
+
+tap.test('Stopping server', function (t1) {
+	console.log("Waiting for the server to shutdown");
+		runningSrv.close();
+		runningSrv = {};
+		console.log("Server down");
+		t1.pass("server can start");
+		t1.end();
+	tap.pass();
 	tap.end();
 });
+

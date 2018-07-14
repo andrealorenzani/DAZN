@@ -5,13 +5,13 @@
 var tap = require('tap');
 var db = require('../dao/dao-loki.js');
 var assert = require('assert');
-var server = require("../index.js");
+var server = require("../Server.js");
 
-/*tap.beforeEach(function (done) {
+tap.beforeEach(function (done) {
 	console.log("Clearing the database");
 	db.getCollection().clear();
 	done();
-});*/
+});
 
 tap.test('Database (loki) testing', function (t1) {
 	db.getCollection().clear();

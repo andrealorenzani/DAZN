@@ -4,7 +4,7 @@ var loki = require('lokijs');
 const uuidv1 = require('uuid/v1');
 var db = new loki('streams.json');
 var streamColl = db.addCollection('streams');
-var server = require('../index.js').getKeepAliveTimeout;
+var server = require('../Server.js').getKeepAliveTimeout;
 
 exports.createStream = function(user){
 	var openStreams = streamColl.chain()
